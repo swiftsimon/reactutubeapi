@@ -7,8 +7,12 @@ import VideoListItem from './video_list_item'
 const VideoList = (props) => {
     // videoItems is going to be an array, React knows this internally and can handle it 
     const videoItems = props.videos.map((video) => {
-
-        return <VideoListItem video={video} />
+        return (
+            <VideoListItem 
+                onVideoSelect={props.onVideoSelect} // comes in as props from app, and we send as props to VideoListItem
+                key={video.etag} 
+                video={video} />
+        )
     })
 
     return (

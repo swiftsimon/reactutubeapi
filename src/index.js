@@ -2,11 +2,14 @@
 // a compnent is written in JS but produces HTML
 // JSX is a subset of JS
 
+// Redux holds all the application data in a single 'application state' object
+
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import YTSearch from 'youtube-api-search'
 import SearchBar from './components/search_bar'
 import VideoList from './components/video_list'
+import VideoDetail from './components/video_detail'
 
 const API_KEY = 'AIzaSyARBgwrsDblJJRIVVBo-e_pRZIDWqjgBwE'
 
@@ -17,11 +20,15 @@ class App extends Component {  // app is a type of component, we can have many '
 
         this.state = { 
             videos: [],
+            selectedVideo: null
         }
 
-        YTSearch({ key: API_KEY, term: 'surfing' }, (returnedVideos) => {  // youtube API call, callback
-            this.setState({ videos: returnedVideos})
-        })
+        YTSearch({ key: API_KEY, term: 'travel' }, (returnedVideos) => {  // youtube API call, callback
+            this.setState({   // setting state rerenders this component, now with returned videos
+                videos: returnedVideos,
+                selectedVideo: returnedVideos[0]
+            })
+        }) // this component might try and render before this call comes back, resulting in null props to VideoDetail or VideoList
     }
 
     // <VideoList videos={this.state.videos} />  passes props 'videos' from App parent state to child VideoList
@@ -30,7 +37,10 @@ class App extends Component {  // app is a type of component, we can have many '
             <div>
                 <h2>React</h2>
                 <SearchBar />
-                <VideoList videos={this.state.videos} />  
+                <VideoDetail video={this.state.selectedVideo} />
+                <VideoList 
+                    onVideoSelect={selectedVideo => this.setState({selectedVideo})} //pass as props to VideoList
+                    videos={this.state.videos} />  
             </div>
         )
     }
